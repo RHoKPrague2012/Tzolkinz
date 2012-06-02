@@ -94,15 +94,15 @@ body {
 }
 
 
-#searchbutton  {
+.searchbutton  {
 	width:320px;
 	height: 40px;}
 
-#searchbox {
+.searchbox {
 	width:320px;
 	height:30px;}
 
-#select_diet {
+.select_diet {
 	width:260px;
 	height:40px;
 	}
@@ -127,15 +127,15 @@ px      68    160    252    344    436    528    620    712    */
 		padding: 48px 28px 60px;
 	}
 	
-	#searchbutton  {
+	.searchbutton  {
 	width:280px;
 	height: 40px;}
 
-	#searchbox {
+	.searchbox {
 	width:280px;
 	height:30px;}
 
-	#select_diet {
+	.select_diet {
 	width:200px;
 	height:40px;}
 
@@ -159,15 +159,15 @@ px      68    160    252    */
 		padding: 4px 4px 4px 4px;
 	}
 	
-	#searchbutton  {
+	.searchbutton  {
 	width:220px;
 	height: 40px;}
 
-	#searchbox {
+	.searchbox {
 	width:220px;
 	height:30px;}
 
-	#select_diet {
+	.select_diet {
 	width:220px;
 	height:40px;
 	}
@@ -195,15 +195,15 @@ px      68    160    252    344    436    */
 	}
 	
 	
-#searchbutton  {
+.searchbutton  {
 	width:280px;
 	height: 40px;}
 
-#searchbox {
+.searchbox {
 	width:280px;
 	height:30px;}
 
-#select_diet {
+.select_diet {
 	width:200px;
 	height:40px;
 	}
@@ -238,7 +238,7 @@ P {padding-bottom:20px;}
 			margin-right:auto;
 			}
 
-#searchbox {
+.searchbox {
 	font: 18px Georgia, serif;
 	padding:3px;
 	margin-top:25px;
@@ -248,7 +248,7 @@ P {padding-bottom:20px;}
 
 
 
-#searchbutton  {
+.searchbutton  {
 margin-top:25px;
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -280,7 +280,7 @@ margin-top:25px;
 }
 
 
-select#select_diet {
+.select_diet {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -314,3 +314,28 @@ select#select_diet {
 /* nav links */
 
 #navig {margin-top:25px}
+
+
+
+/* product detail */
+
+#rating {font-family:verdana, sans-serif;
+		font-size:30px;
+		font-weight:bold;
+		}
+
+#rating_desc
+
+#product_desc
+
+
+/* discussion */
+
+.discussion_comment
+
+.discussion_name
+
+.discussion_date
+
+.comment_text
+
