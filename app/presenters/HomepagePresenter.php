@@ -11,5 +11,10 @@ class HomepagePresenter extends BasePresenter {
         parent::startup();
     }
     
+    
+    public function createComponentSearchContainer() {
+        return new SearchContainer($this);
+    }
+    
 }
 

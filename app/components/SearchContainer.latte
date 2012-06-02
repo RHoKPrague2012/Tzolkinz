@@ -1,0 +1,10 @@
+{form searchForm}
+
+{if $form->getErrors()}
+    <div class="error">
+        {$form->render('errors')}
+    </div>
+{/if}
+ {label search /} {input search} {input submit}
+
+{/form}
