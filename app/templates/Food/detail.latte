@@ -1,0 +1,27 @@
+{block content}
+
+<h3>{$food->name} a {$diet->name}</h3>
+
+<div id="rating">
+
+    <div id="rating_number"  class="vhodnost{$foodDietRanks->rank}">
+        {$foodDietRanks->rank}
+    </div>
+
+
+
+    <div id="rating_desc">
+        {$rankDef->desc}
+    </div>
+
+
+
+    <div id="product_desc">
+        {$foodDietRanks->desc}
+    </div>
+
+</div>
+
+<a href="{plink Homepage:default}">Zpět na hledání</a>
+{control commentsContainer}
+<a href="{plink Homepage:default}">Zpět na hledání</a>

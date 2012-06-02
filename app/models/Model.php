@@ -63,5 +63,12 @@ class Model extends Nette\Object {
     public function getFoodHrefs() {
         return $this->database->table('food_hrefs');
     }
+    
+    /**
+     * @param Nette\Database\Connection $databse
+     */
+    public function getRanksDef() {
+        return $this->database->table('ranks_def');
+    }
 
 }

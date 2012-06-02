@@ -1,16 +1,16 @@
-<?php //netteCache[01]000365a:2:{s:4:"time";s:21:"0.39158800 1338645959";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:43:"/home/vava/rhok/app/templates/@layout.latte";i:2;i:1338645954;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
+<?php //netteCache[01]000365a:2:{s:4:"time";s:21:"0.76181200 1338655173";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:43:"/home/vava/rhok/app/templates/@layout.latte";i:2;i:1338655173;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
 
 // source file: /home/vava/rhok/app/templates/@layout.latte
 
 ?><?php
 // prolog Nette\Latte\Macros\CoreMacros
-list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '3erhkjnz94')
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '3nwzytc91m')
 ;
 // prolog Nette\Latte\Macros\UIMacros
 //
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lb9691e9df7e_content')) { function _lb9691e9df7e_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lbaf212b5154_content')) { function _lbaf212b5154_content($_l, $_args) { extract($_args)
 ;
 }}
 
@@ -43,7 +43,7 @@ if ($_l->extends) {
         <!--[if lt IE 9]>
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-        <link rel="stylesheet" media="all" href="css/styles.css" />
+        <link rel="stylesheet" media="all" href="/rhok/css/styles.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>

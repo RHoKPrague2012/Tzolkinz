@@ -35,6 +35,13 @@ $router[] = new Route('index.php', array(
 	'action' => 'default',
 ), Route::ONE_WAY);
 
+$router[] = new Route('food/detail/<dietId>/<foodId>', array(
+	'presenter' => 'Food',
+	'action' => 'detail',
+	'dietId' => NULL,
+    'foodId' => NULL,
+));
+
 $router[] = new Route('<presenter>/<action>/<id>', array(
 	'presenter' => 'Homepage',
 	'action' => 'default',

@@ -1,0 +1,20 @@
+<div id="discussion">
+
+    <h4>Diskuse</h4>
+
+    {foreach $comments as $c}
+        <div  class="discussion_comment">
+            <span class="discussion_name">
+                {$c->nick}
+            </span>
+            <span class="discussion_date">
+                {$c->insert_date}
+            </span>
+
+            <span class="comment_text">
+                {$c->message}
+            </span>
+        </div>
+    {/foreach}
+    
+</div>
