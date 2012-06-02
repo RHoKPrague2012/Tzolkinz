@@ -1,18 +1,32 @@
 <?php
 
+use Nette\Diagnostics\Debugger, Nette\Application\Routers\Route;
+
 require_once LIBS_DIR . '/Nette/loader.php';
 
-Debug::enable();
 Debugger::enable(Debugger::DEVELOPMENT);
 
-Environment::loadConfig();
+Debugger::$logDirectory = __DIR__ . '/../log';
+Debugger::$strictMode = TRUE;
+$ConnectionPanel = new \Nette\Database\Diagnostics\ConnectionPanel;
+Debugger::addPanel($ConnectionPanel);
 
-$session = Environment::getSession();
-$session->setSavePath(APP_DIR . '/sessions/');
 
-$application = Environment::getApplication();
-//$application->errorPresenter = 'Error';
-//$application->catchExceptions = TRUE;
+// Configure application
+$configurator = new Nette\Config\Configurator;
+$configurator -> setProductionMode(FALSE);
+$configurator -> setTempDirectory(__DIR__ . '/../temp');
+
+// Enable RobotLoader - this will load all classes automatically
+$configurator -> createRobotLoader() -> addDirectory(APP_DIR) -> addDirectory(LIBS_DIR) -> register();
+
+// Create Dependency Injection container from config.neon file
+$configurator -> addConfig(__DIR__ . '/config/config.neon');
+$container = $configurator -> createContainer();
+$container->getService("database")->onQuery[] = callback($ConnectionPanel, 'logQuery');
+
+
+
 
 $router = $application->getRouter();
 
@@ -26,5 +40,10 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 	'action' => 'default',
 	'id' => NULL,
 ));
+
+$application = $container -> application;
+
+//$application->errorPresenter = 'Error';
+$application->catchExceptions = FALSE;
 
 $application->run();
