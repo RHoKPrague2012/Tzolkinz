@@ -123,8 +123,8 @@ px      68    160    252    344    436    528    620    712    */
 @media only screen and (min-width: 768px) and (max-width: 991px) {
 	
 	body {
-		width: 100%;
-		padding: 48px 28px 60px;
+		width: 98%;
+		padding: 48px 8px 8px 8px;
 	}
 	
 	.searchbutton  {
@@ -155,7 +155,7 @@ px      68    160    252    */
 @media only screen and (max-width: 767px) {
 	
 	body {
-		width: 100%;
+		width: 98%;
 		padding: 4px 4px 4px 4px;
 	}
 	
@@ -190,7 +190,7 @@ px      68    160    252    344    436    */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
 	
 	body {
-		width: 100%;
+		width: 98%;
 		padding: 4px 4px 4px 4px;
 	}
 	
@@ -319,23 +319,45 @@ margin-top:25px;
 
 /* product detail */
 
-#rating {font-family:verdana, sans-serif;
-		font-size:30px;
+#rating {background: #fff;padding:8px 10px 3px 10px;
+	-moz-border-radius:15px;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+	margin-bottom:5px;
+}
+
+#rating_number {font-family:verdana, sans-serif;
+		font-size:50px;
 		font-weight:bold;
-		}
+		padding:10px;
+	}
 
-#rating_desc
+#rating_desc {font-size:24px;margin-top:5px;margin-bottom:10px;}
 
-#product_desc
+.vhodnost1 {color:#529E5F;}
+.vhodnost2 {color:#7A803B;}
+.vhodnost3 {color:#D5AB76;}
+.vhodnost4 {color:#B04517;}
+.vhodnost5 {color:#8D1F1C;}
+
+#product_desc {font-size:18px;margin-top:5px;margin-bottom:10px;text-align:left;}
 
 
 /* discussion */
 
-.discussion_comment
+#discussion {margin-top:15px;
+text-align:left;
+background: #fff;padding:8px 10px 3px 10px;
+	-moz-border-radius:15px;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+}
 
-.discussion_name
+.discussion_comment {margin-top:15px;}
 
-.discussion_date
+.discussion_name {font-weight:bold;}
 
-.comment_text
+.discussion_date {font-weight:normal;}
+
+.comment_text {display:block;}
 
