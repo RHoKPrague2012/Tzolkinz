@@ -1,10 +1,27 @@
+
+<h3>Jak je potravina vhodná?</h3>
+
 {form searchForm}
 
-{if $form->getErrors()}
-    <div class="error">
-        {$form->render('errors')}
-    </div>
-{/if}
- {label search /} {input search} {input submit}
 
+    {if $form->getErrors()}
+        <div class="error">
+            {$form->render('errors')}
+        </div>
+    {/if}
+
+    
+    <div class="diet_type">
+        
+        <div class="diet_type_desc">{label dietType /}</div>
+            {input dietType}
+        
+    </div>
+    {input search}
+    <div class="search_button">
+        {input submit}
+    </div>
 {/form}
+
+
+
