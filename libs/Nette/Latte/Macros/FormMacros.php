@@ -14,7 +14,9 @@ namespace Nette\Latte\Macros;
 use Nette,
 	Nette\Latte,
 	Nette\Latte\MacroNode,
-	Nette\Latte\ParseException,
+	Nette\Latte\PhpWriter,
+	Nette\Latte\CompileException,
+	Nette\Forms\Form,
 	Nette\Utils\Strings;
 
 
@@ -39,8 +41,7 @@ class FormMacros extends MacroSet
 			'Nette\Latte\Macros\FormMacros::renderFormBegin($form = $_form = $_control[%node.word], %node.array)',
 			'Nette\Latte\Macros\FormMacros::renderFormEnd($_form)');
 		$me->addMacro('label', array($me, 'macroLabel'), '?></label><?php');
-		$me->addMacro('@input', array($me, 'macroAttrInput'));
-		$me->addMacro('input', 'echo $_form[%node.word]->getControl()->addAttributes(%node.array)');
+		$me->addMacro('input', 'echo $_form[%node.word]->getControl()->addAttributes(%node.array)', NULL, array($me, 'macroAttrInput'));
 		$me->addMacro('formContainer', '$_formStack[] = $_form; $formContainer = $_form = $_form[%node.word]', '$_form = array_pop($_formStack)');
 	}
 
@@ -52,7 +53,7 @@ class FormMacros extends MacroSet
 	/**
 	 * {label ...} and optionally {/label}
 	 */
-	public function macroLabel(MacroNode $node, $writer)
+	public function macroLabel(MacroNode $node, PhpWriter $writer)
 	{
 		$cmd = 'if ($_label = $_form[%node.word]->getLabel()) echo $_label->addAttributes(%node.array)';
 		if ($node->isEmpty = (substr($node->args, -1) === '/')) {
@@ -68,7 +69,7 @@ class FormMacros extends MacroSet
 	/**
 	 * n:input
 	 */
-	public function macroAttrInput(MacroNode $node, $writer)
+	public function macroAttrInput(MacroNode $node, PhpWriter $writer)
 	{
 		if ($node->htmlNode->attrs) {
 			$reset = array_fill_keys(array_keys($node->htmlNode->attrs), NULL);
@@ -87,7 +88,7 @@ class FormMacros extends MacroSet
 	 * Renders form begin.
 	 * @return void
 	 */
-	public static function renderFormBegin($form, $attrs)
+	public static function renderFormBegin(Form $form, array $attrs)
 	{
 		$el = $form->getElementPrototype();
 		$el->action = (string) $el->action;
@@ -104,7 +105,7 @@ class FormMacros extends MacroSet
 	 * Renders form end.
 	 * @return string
 	 */
-	public static function renderFormEnd($form)
+	public static function renderFormEnd(Form $form)
 	{
 		$s = '';
 		if (strcasecmp($form->getMethod(), 'get') === 0) {

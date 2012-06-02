@@ -143,7 +143,7 @@ class Compiler extends Nette\Object
 			$factory = $name . 'Factory';
 			if (!$def->shared && !$def->internal && !$this->container->hasDefinition($factory)) {
 				$this->container->addDefinition($factory)
-					->setClass('Nette\Callback', array('@container', 'create' . ucfirst($name)))
+					->setClass('Nette\Callback', array('@container', Nette\DI\Container::getMethodName($name, FALSE)))
 					->setAutowired(FALSE)
 					->tags = $def->tags;
 			}
@@ -168,12 +168,14 @@ class Compiler extends Nette\Object
 
 		$defs = $this->container->getDefinitions();
 		ksort($defs);
+		$list = array_keys($defs);
 		foreach (array_reverse($defs, TRUE) as $name => $def) {
-			if ($def->class === 'Nette\DI\NestedAccessor' && ($list = preg_grep('#^'.$name.'_#i', array_keys($defs)))) {
-				$def->class = $className . '_' . $name;
+			if ($def->class === 'Nette\DI\NestedAccessor' && ($found = preg_grep('#^'.$name.'\.#i', $list))) {
+				$list = array_diff($list, $found);
+				$def->class = $className . '_' . preg_replace('#\W+#', '_', $name);
 				$class->documents = preg_replace("#\S+(?= \\$$name$)#", $def->class, $class->documents);
 				$classes[] = $accessor = new Nette\Utils\PhpGenerator\ClassType($def->class);
-				foreach ($list as $item) {
+				foreach ($found as $item) {
 					$short = substr($item, strlen($name)  + 1);
 					$accessor->addDocument($defs[$item]->shared
 						? "@property {$defs[$item]->class} \$$short"
@@ -210,8 +212,8 @@ class Compiler extends Nette\Object
 		});
 
 		foreach ($all as $name => $def) {
-			$shared = array_key_exists($name, $config['services']);
-			$name = ($namespace ? $namespace . '_' : '') . $name;
+			$shared = array_key_exists($name, $services);
+			$name = ($namespace ? $namespace . '.' : '') . $name;
 
 			if (($parent = Helpers::takeParent($def)) && $parent !== $name) {
 				$container->removeDefinition($name);
@@ -253,7 +255,7 @@ class Compiler extends Nette\Object
 
 		$known = $shared
 			? array('class', 'factory', 'arguments', 'setup', 'autowired', 'run', 'tags')
-			: array('class', 'factory', 'arguments', 'setup', 'tags', 'internal', 'parameters');
+			: array('class', 'factory', 'arguments', 'setup', 'autowired', 'tags', 'internal', 'parameters');
 
 		if ($error = array_diff(array_keys($config), $known)) {
 			throw new Nette\InvalidStateException("Unknown key '" . implode("', '", $error) . "' in definition of service.");
@@ -298,12 +300,7 @@ class Compiler extends Nette\Object
 				Validators::assert($setup, 'callable|stdClass', "setup item #$id");
 				if ($setup instanceof \stdClass) {
 					Validators::assert($setup->value, 'callable', "setup item #$id");
-					if (strpos(is_array($setup->value) ? implode('', $setup->value) : $setup->value, '$') === FALSE) {
-						$definition->addSetup($setup->value, self::filterArguments($setup->attributes));
-					} else {
-						Validators::assert($setup->attributes, 'list:1', "setup arguments for '" . callback($setup->value) . "'");
-						$definition->addSetup($setup->value, $setup->attributes[0]);
-					}
+					$definition->addSetup($setup->value, self::filterArguments($setup->attributes));
 				} else {
 					$definition->addSetup($setup);
 				}
@@ -317,7 +314,7 @@ class Compiler extends Nette\Object
 		}
 
 		if (isset($config['autowired'])) {
-			Validators::assertField($config, 'autowired', 'bool|string');
+			Validators::assertField($config, 'autowired', 'bool');
 			$definition->setAutowired($config['autowired']);
 		}
 
@@ -347,7 +344,11 @@ class Compiler extends Nette\Object
 
 
 
-	private static function filterArguments(array $args)
+	/**
+	 * Removes ... and replaces entities with Nette\DI\Statement.
+	 * @return array
+	 */
+	public static function filterArguments(array $args)
 	{
 		foreach ($args as $k => $v) {
 			if ($v === '...') {

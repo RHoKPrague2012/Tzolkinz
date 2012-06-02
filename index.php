@@ -11,5 +11,3 @@ define('LIBS_DIR', WWW_DIR . '/libs');
 define('TEMP_DIR', WWW_DIR . '/temp');
 
 require APP_DIR . '/bootstrap.php';
-
-die("die bitch!");

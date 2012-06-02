@@ -18,7 +18,7 @@ use Nette,
 
 /**
  * Filtered table representation.
- * Selector is based on the great library NotORM http://www.notorm.com written by Jakub Vrana.
+ * Selection is based on the great library NotORM http://www.notorm.com written by Jakub Vrana.
  *
  * @author     Jakub Vrana
  *
@@ -35,7 +35,7 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 	/** @var string primary key field name */
 	protected $primary;
 
-	/** @var array of [primary key => TableRow] readed from database */
+	/** @var array of [primary key => TableRow] read from database */
 	protected $rows;
 
 	/** @var array of [primary key => TableRow] modifiable */
@@ -74,10 +74,10 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 	/** @var array of referenced TableSelection */
 	protected $referenced = array();
 
-	/** @var array of [sql => [column => [key => TableRow]]] used by GroupedTableSelection */
+	/** @var array of [sql+parameters => [column => [key => TableRow]]] used by GroupedTableSelection */
 	protected $referencing = array();
 
-	/** @var array of [sql => [key => TableRow]] used by GroupedTableSelection */
+	/** @var array of [conditions => [key => TableRow]] used by GroupedTableSelection */
 	protected $aggregation = array();
 
 	/** @var array of touched columns */
@@ -119,11 +119,7 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 	{
 		$cache = $this->connection->getCache();
 		if ($cache && !$this->select && $this->rows !== NULL) {
-			$accessed = $this->accessed;
-			if (is_array($accessed)) {
-				$accessed = array_filter($accessed);
-			}
-			$cache->save(array(__CLASS__, $this->name, $this->conditions), $accessed);
+			$cache->save(array(__CLASS__, $this->name, $this->conditions), $this->accessed);
 		}
 		$this->rows = NULL;
 	}
@@ -163,7 +159,7 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 	/**
 	 * Returns row specified by primary key.
 	 * @param  mixed
-	 * @return ActiveRow or NULL if there is no such row
+	 * @return ActiveRow or FALSE if there is no such row
 	 */
 	public function get($key)
 	{
@@ -221,9 +217,14 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 			return $this;
 		}
 
+		$hash = md5(json_encode(func_get_args()));
+		if (isset($this->conditions[$hash])) {
+			return $this;
+		}
+
 		$this->__destruct();
 
-		$this->conditions[] = $condition;
+		$this->conditions[$hash] = $condition;
 		$condition = $this->removeExtraTables($condition);
 		$condition = $this->tryDelimite($condition);
 
@@ -342,10 +343,12 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 	 */
 	public function aggregation($function)
 	{
-		$selection = clone $this;
+		$selection = new Selection($this->name, $this->connection);
+		$selection->where = $this->where;
+		$selection->parameters = $this->parameters;
+		$selection->conditions = $this->conditions;
+
 		$selection->select($function);
-		$selection->limit = null;
-		$selection->order = array();
 
 		foreach ($selection->fetch() as $val) {
 			return $val;
@@ -422,10 +425,11 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 
 		$prefix = $join ? "$this->delimitedName." : '';
 		if ($this->select) {
-			$cols = $this->removeExtraTables($this->tryDelimite(implode(', ', $this->select)));
+			$cols = $this->tryDelimite($this->removeExtraTables(implode(', ', $this->select)));
 
 		} elseif ($this->prevAccessed) {
-			$cols = $prefix . implode(', ' . $prefix, array_map(array($this->connection->getSupplementalDriver(), 'delimite'), array_keys($this->prevAccessed)));
+			$cols = array_map(array($this->connection->getSupplementalDriver(), 'delimite'), array_keys(array_filter($this->prevAccessed)));
+			$cols = $prefix . implode(', ' . $prefix, $cols);
 
 		} else {
 			$cols = $prefix . '*';
@@ -441,11 +445,11 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 		$driver = $this->connection->getSupplementalDriver();
 		$reflection = $this->connection->getDatabaseReflection();
 		$joins = array();
-		preg_match_all('~\\b([a-z][\\w.:]*[.:])([a-z]\\w*)(\\s+IS\\b|\\s*<=>)?~i', $val, $matches);
+		preg_match_all('~\\b([a-z][\\w.:]*[.:])([a-z]\\w*|\*)(\\s+IS\\b|\\s*<=>)?~i', $val, $matches);
 		foreach ($matches[1] as $names) {
 			$parent = $this->name;
 			if ($names !== "$parent.") { // case-sensitive
-				preg_match_all('~\\b([a-z][\\w]*)([.:])~', $names, $matches, PREG_SET_ORDER);
+				preg_match_all('~\\b([a-z][\\w]*|\*)([.:])~i', $names, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) {
 					list(, $name, $delimiter) = $match;
 
@@ -554,10 +558,8 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 	protected function tryDelimite($s)
 	{
 		$driver = $this->connection->getSupplementalDriver();
-		return preg_replace_callback('#(?<=[\s,<>=]|^)[a-z_][a-z0-9_.]*(?=[\s,<>=]|$)#i', function($m) use ($driver) {
-			return strtoupper($m[0]) === $m[0]
-				? $m[0]
-				: implode('.', array_map(array($driver, 'delimite'), explode('.', $m[0])));
+		return preg_replace_callback('#(?<=[^\w`"\[]|^)[a-z_][a-z0-9_]*(?=[^\w`"(\]]|$)#i', function($m) use ($driver) {
+			return strtoupper($m[0]) === $m[0] ? $m[0] : $driver->delimite($m[0]);
 		}, $s);
 	}
 
@@ -577,9 +579,15 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 
 
 
-	public function access($key, $delete = FALSE)
+	/**
+	 * @internal
+	 * @param  string        column name
+	 * @param  bool|NULL     TRUE - cache, FALSE - don't cache, NULL - remove
+	 * @return bool
+	 */
+	public function access($key, $cache = TRUE)
 	{
-		if ($delete) {
+		if ($cache === NULL) {
 			if (is_array($this->accessed)) {
 				$this->accessed[$key] = FALSE;
 			}
@@ -590,10 +598,10 @@ class Selection extends Nette\Object implements \Iterator, \ArrayAccess, \Counta
 			$this->accessed = '';
 
 		} elseif (!is_string($this->accessed)) {
-			$this->accessed[$key] = TRUE;
+			$this->accessed[$key] = $cache;
 		}
 
-		if (!$this->select && $this->prevAccessed && ($key === NULL || !isset($this->prevAccessed[$key]))) {
+		if ($cache && !$this->select && $this->prevAccessed && ($key === NULL || !isset($this->prevAccessed[$key]))) {
 			$this->prevAccessed = '';
 			$this->rows = NULL;
 			return TRUE;

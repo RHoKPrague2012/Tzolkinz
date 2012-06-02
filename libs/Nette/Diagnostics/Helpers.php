@@ -19,7 +19,6 @@ use Nette;
  * Rendering helpers for Debugger.
  *
  * @author     David Grudl
- * @internal
  */
 final class Helpers
 {
@@ -201,6 +200,22 @@ final class Helpers
 			},
 			self::htmlDump($dump)
 		) . '</pre>';
+	}
+
+
+
+	public static function findTrace(array $trace, $method, & $index = NULL)
+	{
+		$m = explode('::', $method);
+		foreach ($trace as $i => $item) {
+			if (isset($item['function']) && $item['function'] === end($m)
+				&& isset($item['class']) === isset($m[1])
+				&& (!isset($item['class']) || $item['class'] === $m[0] || is_subclass_of($item['class'], $m[0])))
+			{
+				$index = $i;
+				return $item;
+			}
+		}
 	}
 
 }

@@ -18,7 +18,7 @@ use Nette,
 
 
 /**
- * Base IMacro implementation. Allowes add multiple macros.
+ * Base IMacro implementation. Allows add multiple macros.
  *
  * @author     David Grudl
  */
@@ -39,9 +39,9 @@ class MacroSet extends Nette\Object implements Latte\IMacro
 
 
 
-	public function addMacro($name, $begin, $end = NULL)
+	public function addMacro($name, $begin, $end = NULL, $attr = NULL)
 	{
-		$this->macros[$name] = array($begin, $end);
+		$this->macros[$name] = array($begin, $end, $attr);
 		$this->compiler->addMacro($name, $this);
 		return $this;
 	}
@@ -77,23 +77,40 @@ class MacroSet extends Nette\Object implements Latte\IMacro
 
 	/**
 	 * New node is found.
-	 * @return bool|string
+	 * @return bool
 	 */
 	public function nodeOpened(MacroNode $node)
 	{
-		$node->isEmpty = !isset($this->macros[$node->name][1]);
-		return $this->compile($node, $this->macros[$node->name][0]);
+		if ($this->macros[$node->name][2] && $node->htmlNode) {
+			$node->isEmpty = TRUE;
+			$this->compiler->setContext(Latte\Compiler::CONTEXT_DOUBLE_QUOTED);
+			$res = $this->compile($node, $this->macros[$node->name][2]);
+			$this->compiler->setContext(NULL);
+			if (!$node->attrCode) {
+				$node->attrCode = "<?php $res ?>";
+			}
+		} else {
+			$node->isEmpty = !isset($this->macros[$node->name][1]);
+			$res = $this->compile($node, $this->macros[$node->name][0]);
+			if (!$node->openingCode) {
+				$node->openingCode = "<?php $res ?>";
+			}
+		}
+		return $res !== FALSE;
 	}
 
 
 
 	/**
 	 * Node is closed.
-	 * @return string
+	 * @return void
 	 */
 	public function nodeClosed(MacroNode $node)
 	{
-		return $this->compile($node, $this->macros[$node->name][1]);
+		$res = $this->compile($node, $this->macros[$node->name][1]);
+		if (!$node->closingCode) {
+			$node->closingCode = "<?php $res ?>";
+		}
 	}
 
 
@@ -107,15 +124,11 @@ class MacroSet extends Nette\Object implements Latte\IMacro
 		$node->tokenizer->reset();
 		$writer = Latte\PhpWriter::using($node, $this->compiler);
 		if (is_string($def)) {
-			$code = $writer->write($def);
+			return $writer->write($def);
 		} else {
-			$code = callback($def)->invoke($node, $writer);
-			if ($code === FALSE) {
-				return FALSE;
+			return callback($def)->invoke($node, $writer);
 			}
 		}
-		return "<?php $code ?>";
-	}
 
 
 

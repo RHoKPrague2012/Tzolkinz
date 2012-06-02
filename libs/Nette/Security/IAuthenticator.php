@@ -28,9 +28,12 @@ interface IAuthenticator
 
 	/** Exception error code */
 	const IDENTITY_NOT_FOUND = 1,
-		INVALID_CREDENTIAL = 2,
+		INVALID_PASSWORD = 2,
 		FAILURE = 3,
-		NOT_APPROVED = 4;
+		NOT_APPROVED = 4,
+        INACTIVE_USER = 5,
+        INACTIVE_USER_INVALID_PASSWORD = 6,
+        DELETED_USER = 7;
 
 	/**
 	 * Performs an authentication against e.g. database.

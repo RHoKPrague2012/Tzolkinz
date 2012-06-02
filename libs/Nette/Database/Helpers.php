@@ -19,10 +19,22 @@ use Nette;
  * Database helpers.
  *
  * @author     David Grudl
- * @internal
  */
 class Helpers
 {
+	/** @var array */
+	public static $typePatterns = array(
+		'^_' => IReflection::FIELD_TEXT, // PostgreSQL arrays
+		'BYTEA|BLOB|BIN' => IReflection::FIELD_BINARY,
+		'TEXT|CHAR' => IReflection::FIELD_TEXT,
+		'YEAR|BYTE|COUNTER|SERIAL|INT|LONG' => IReflection::FIELD_INTEGER,
+		'CURRENCY|REAL|MONEY|FLOAT|DOUBLE|DECIMAL|NUMERIC|NUMBER' => IReflection::FIELD_FLOAT,
+		'^TIME$' => IReflection::FIELD_TIME,
+		'TIME' => IReflection::FIELD_DATETIME, // DATETIME, TIMESTAMP
+		'DATE' => IReflection::FIELD_DATE,
+		'BOOL|BIT' => IReflection::FIELD_BOOL,
+	);
+
 
 
 	/**
@@ -112,31 +124,22 @@ class Helpers
 	 */
 	public static function detectType($type)
 	{
-		static $types, $patterns = array(
-			'BYTEA|BLOB|BIN' => IReflection::FIELD_BINARY,
-			'TEXT|CHAR' => IReflection::FIELD_TEXT,
-			'YEAR|BYTE|COUNTER|SERIAL|INT|LONG' => IReflection::FIELD_INTEGER,
-			'CURRENCY|REAL|MONEY|FLOAT|DOUBLE|DECIMAL|NUMERIC|NUMBER' => IReflection::FIELD_FLOAT,
-			'TIME|DATE' => IReflection::FIELD_DATETIME,
-			'BOOL|BIT' => IReflection::FIELD_BOOL,
-		);
-
-		if (!isset($types[$type])) {
-			$types[$type] = 'string';
-			foreach ($patterns as $s => $val) {
+		static $cache;
+		if (!isset($cache[$type])) {
+			$cache[$type] = 'string';
+			foreach (self::$typePatterns as $s => $val) {
 				if (preg_match("#$s#i", $type)) {
-					return $types[$type] = $val;
+					return $cache[$type] = $val;
 				}
 			}
 		}
-		return $types[$type];
+		return $cache[$type];
 	}
 
 
 
 	/**
 	 * Import SQL dump from file - extreme fast.
-	 * @param  string  filename
 	 * @return int  count of commands
 	 */
 	public static function loadFromFile(Connection $connection, $file)

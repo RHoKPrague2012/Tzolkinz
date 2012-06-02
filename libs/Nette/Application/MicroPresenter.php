@@ -43,6 +43,17 @@ class MicroPresenter extends Nette\Object implements Application\IPresenter
 
 
 	/**
+	 * Gets the context.
+	 * @return \SystemContainer|Nette\DI\IContainer
+	 */
+	final public function getContext()
+	{
+		return $this->context;
+	}
+
+
+
+	/**
 	 * @param  Nette\Application\Request
 	 * @return Nette\Application\IResponse
 	 */
@@ -106,7 +117,7 @@ class MicroPresenter extends Nette\Object implements Application\IPresenter
 		$template->basePath = rtrim($url->getBasePath(), '/');
 
 		$template->registerHelperLoader('Nette\Templating\Helpers::loader');
-		$template->setCacheStorage($context->templateCacheStorage);
+		$template->setCacheStorage($context->nette->templateCacheStorage);
 		$template->onPrepareFilters[] = function($template) use ($latteFactory, $context) {
 			$template->registerFilter($latteFactory ? $latteFactory() : new Nette\Latte\Engine);
 		};

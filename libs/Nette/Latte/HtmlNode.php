@@ -3,7 +3,7 @@
 /**
  * This file is part of the Nette Framework.
  *
- * Copyright (c) 2004, 2010 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
  *
  * This source file is subject to the "Nette license", and/or
  * GPL license. For more information please see http://nette.org
@@ -19,7 +19,6 @@ use Nette;
  * HTML element node.
  *
  * @author     David Grudl
- * @internal
  */
 class HtmlNode extends Nette\Object
 {
@@ -37,6 +36,9 @@ class HtmlNode extends Nette\Object
 
 	/** @var bool */
 	public $closing = FALSE;
+
+	/** @var string */
+	public $attrCode;
 
 	/** @var int */
 	public $offset;

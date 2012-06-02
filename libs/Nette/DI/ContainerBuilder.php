@@ -186,16 +186,23 @@ class ContainerBuilder extends Nette\Object
 	{
 		// complete class-factory pairs; expand classes
 		foreach ($this->definitions as $name => $def) {
+			if ($def->class === self::CREATED_SERVICE || ($def->factory && $def->factory->entity === self::CREATED_SERVICE)) {
+				$def->class = $name;
+				$def->internal = TRUE;
+				if ($def->factory && $def->factory->entity === self::CREATED_SERVICE) {
+					$def->factory->entity = $def->class;
+				}
+				unset($this->definitions[$name]);
+				$this->definitions['_anonymous_' . str_replace('\\', '_', strtolower(trim($name, '\\')))] = $def;
+			}
+
 			if ($def->class) {
-				$def->class = $def->class === self::CREATED_SERVICE ? $name : $this->expand($def->class);
+				$def->class = $this->expand($def->class);
 				if (!$def->factory) {
 					$def->factory = new Statement($def->class);
 				}
 			} elseif (!$def->factory) {
 				throw new ServiceCreationException("Class and factory are missing in service '$name' definition.");
-			}
-			if ($def->factory && $def->factory->entity === self::CREATED_SERVICE) {
-				$def->factory->entity = $name;
 			}
 		}
 
@@ -329,7 +336,7 @@ class ContainerBuilder extends Nette\Object
 		$classes = $class->addProperty('classes', array());
 		foreach ($this->classes as $name => $foo) {
 			try {
-				$classes->value[$name] = $this->sanitizeName($this->getByType($name));
+				$classes->value[$name] = $this->getByType($name);
 			} catch (ServiceCreationException $e) {
 				$classes->value[$name] = new PhpLiteral('FALSE, //' . strstr($e->getMessage(), ':'));
 			}
@@ -350,14 +357,14 @@ class ContainerBuilder extends Nette\Object
 		foreach ($definitions as $name => $def) {
 			try {
 				$type = $def->class ?: 'object';
-				$sanitized = $this->sanitizeName($name);
-				if (!PhpHelpers::isIdentifier($sanitized)) {
+				$methodName = Container::getMethodName($name, $def->shared);
+				if (!PhpHelpers::isIdentifier($methodName)) {
 					throw new ServiceCreationException('Name contains invalid characters.');
 				}
-				if ($def->shared && $name === $sanitized) {
+				if ($def->shared && !$def->internal && PhpHelpers::isIdentifier($name)) {
 					$class->addDocument("@property $type \$$name");
 				}
-				$method = $class->addMethod(($def->shared ? 'createService' : 'create') . ucfirst($sanitized))
+				$method = $class->addMethod($methodName)
 					->addDocument("@return $type")
 					->setVisibility($def->shared || $def->internal ? 'protected' : 'public')
 					->setBody($name === self::THIS_CONTAINER ? 'return $this;' : $this->generateService($name));
@@ -394,7 +401,8 @@ class ContainerBuilder extends Nette\Object
 
 		$code = '$service = ' . $this->formatStatement(Helpers::expand($def->factory, $parameters, TRUE)) . ";\n";
 
-		if ($def->class && $def->class !== $def->factory->entity) {
+		$entity = $this->normalizeEntity($def->factory->entity);
+		if ($def->class && $def->class !== $entity && !$this->getServiceName($entity)) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $def->class) {\n"
 				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",
 				array("Unable to create service '$name', value returned by factory is not $def->class type.")
@@ -422,7 +430,7 @@ class ContainerBuilder extends Nette\Object
 	public function formatStatement(Statement $statement, $self = NULL)
 	{
 		$entity = $this->normalizeEntity($statement->entity);
-		$arguments = (array) $statement->arguments;
+		$arguments = $statement->arguments;
 
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 			return $this->formatPhp($entity, $arguments, $self);
@@ -430,17 +438,17 @@ class ContainerBuilder extends Nette\Object
 		} elseif ($service = $this->getServiceName($entity)) { // factory calling or service retrieving
 			if ($this->definitions[$service]->shared) {
 				if ($arguments) {
-				throw new ServiceCreationException("Unable to call service '$entity'.");
-			}
-				return $this->formatPhp('$this->?', array($this->sanitizeName($service)));
+					throw new ServiceCreationException("Unable to call service '$entity'.");
+				}
+				return $this->formatPhp('$this->?', array($service));
 			}
 			$params = array();
 			foreach ($this->definitions[$service]->parameters as $k => $v) {
 				$params[] = preg_replace('#\w+$#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
 			}
-			$rm = new \ReflectionFunction(create_function(implode(', ', $params), ''));
+			$rm = new Nette\Reflection\GlobalFunction(create_function(implode(', ', $params), ''));
 			$arguments = Helpers::autowireArguments($rm, $arguments, $this);
-			return $this->formatPhp('$this->?(?*)', array('create' . ucfirst($service), $arguments), $self);
+			return $this->formatPhp('$this->?(?*)', array(Container::getMethodName($service, FALSE), $arguments), $self);
 
 		} elseif ($entity === 'not') { // operator
 			return $this->formatPhp('!?', array($arguments[0]));
@@ -461,10 +469,11 @@ class ContainerBuilder extends Nette\Object
 			return $this->formatPhp("$entity[1](?*)", array($arguments), $self);
 
 		} elseif (Strings::contains($entity[1], '$')) { // property setter
+			Validators::assert($arguments, 'list:1', "setup arguments for '" . callback($entity) . "'");
 			if ($this->getServiceName($entity[0], $self)) {
-				return $this->formatPhp('?->? = ?', array($entity[0], substr($entity[1], 1), $statement->arguments), $self);
+				return $this->formatPhp('?->? = ?', array($entity[0], substr($entity[1], 1), $arguments[0]), $self);
 			} else {
-				return $this->formatPhp($entity[0] . '::$? = ?', array(substr($entity[1], 1), $statement->arguments), $self);
+				return $this->formatPhp($entity[0] . '::$? = ?', array(substr($entity[1], 1), $arguments[0]), $self);
 			}
 
 		} elseif ($service = $this->getServiceName($entity[0], $self)) { // service method
@@ -485,7 +494,7 @@ class ContainerBuilder extends Nette\Object
 	 * Formats PHP statement.
 	 * @return string
 	 */
-	private function formatPhp($statement, $args, $self = NULL)
+	public function formatPhp($statement, $args, $self = NULL)
 	{
 		$that = $this;
 		array_walk_recursive($args, function(&$val) use ($self, $that) {
@@ -500,7 +509,7 @@ class ContainerBuilder extends Nette\Object
 			} elseif ($service = $that->getServiceName($val, $self)) {
 				$val = $service === $self ? '$service' : $that->formatStatement(new Statement($val));
 				$val = new PhpLiteral($val, $self);
-				}
+			}
 		});
 		return PhpHelpers::formatArgs($statement, $args);
 	}
@@ -515,13 +524,6 @@ class ContainerBuilder extends Nette\Object
 	public function expand($value)
 	{
 		return Helpers::expand($value, $this->parameters, TRUE);
-	}
-
-
-
-	private static function sanitizeName($name)
-	{
-		return str_replace('\\', '__', $name);
 	}
 
 
@@ -556,7 +558,7 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function getServiceName($arg, $self = NULL)
 	{
-		if (!is_string($arg) || !preg_match('#^@[\w\\\\]+$#', $arg)) {
+		if (!is_string($arg) || !preg_match('#^@[\w\\\\.].+$#', $arg)) {
 			return FALSE;
 		}
 		$service = substr($arg, 1);

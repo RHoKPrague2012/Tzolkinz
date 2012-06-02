@@ -3,7 +3,7 @@
 /**
  * This file is part of the Nette Framework (http://nette.org)
  *
- * Copyright (c) 2004, 2011 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
  *
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
@@ -153,6 +153,7 @@ class UserStorage extends Nette\Object implements Nette\Security\IUserStorage
 		$section->expireBrowser = (bool) ($flags & self::BROWSER_CLOSED);
 		$section->browserCheck = TRUE;
 		$section->setExpiration(0, 'browserCheck');
+		$section->setExpiration($time, 'foo'); // time check
 		return $this;
 	}
 

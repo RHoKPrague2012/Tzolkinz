@@ -52,12 +52,12 @@ class Configurator extends Nette\Object
 
 	/**
 	 * Set parameter %productionMode%.
-	 * @param  bool
+	 * @param  bool|string|array
 	 * @return Configurator  provides a fluent interface
 	 */
-	public function setProductionMode($on = TRUE)
+	public function setProductionMode($value = TRUE)
 	{
-		$this->parameters['productionMode'] = (bool) $on;
+		$this->parameters['productionMode'] = is_bool($value) ? $value : self::detectProductionMode($value);
 		return $this;
 	}
 
@@ -110,12 +110,26 @@ class Configurator extends Nette\Object
 			'appDir' => isset($trace[1]['file']) ? dirname($trace[1]['file']) : NULL,
 			'wwwDir' => isset($_SERVER['SCRIPT_FILENAME']) ? dirname($_SERVER['SCRIPT_FILENAME']) : NULL,
 			'productionMode' => static::detectProductionMode(),
+			'environment' => static::detectProductionMode() ? self::PRODUCTION : self::DEVELOPMENT,
 			'consoleMode' => PHP_SAPI === 'cli',
 			'container' => array(
 				'class' => 'SystemContainer',
 				'parent' => 'Nette\DI\Container',
 			)
 		);
+	}
+
+
+
+	/**
+	 * @param  string        error log directory
+	 * @param  string        administrator email
+	 * @return void
+	 */
+	public function enableDebugger($logDirectory = NULL, $email = NULL)
+	{
+		Nette\Diagnostics\Debugger::$strictMode = TRUE;
+		Nette\Diagnostics\Debugger::enable($this->parameters['productionMode'], $logDirectory, $email);
 	}
 
 
@@ -142,10 +156,7 @@ class Configurator extends Nette\Object
 	 */
 	public function addConfig($file, $section = self::AUTO)
 	{
-		if ($section === self::AUTO) {
-			$section = $this->parameters['productionMode'] ? self::PRODUCTION : self::DEVELOPMENT;
-		}
-		$this->files[] = array($file, $section);
+		$this->files[] = array($file, $section === self::AUTO ? $this->parameters['environment'] : $section);
 		return $this;
 	}
 
@@ -288,11 +299,15 @@ class Configurator extends Nette\Object
 
 	/**
 	 * Detects production mode by IP address.
+	 * @param  string|array  IP addresses or computer names whitelist detection
 	 * @return bool
 	 */
-	public static function detectProductionMode()
+	public static function detectProductionMode($list = NULL)
 	{
-		return !isset($_SERVER['REMOTE_ADDR']) || !in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'), TRUE);
+		$list = is_string($list) ? preg_split('#[,\s]+#', $list) : $list;
+		$list[] = '127.0.0.1';
+		$list[] = '::1';
+		return !in_array(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : php_uname('n'), $list, TRUE);
 	}
 
 }

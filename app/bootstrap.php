@@ -26,7 +26,7 @@ $container = $configurator -> createContainer();
 $container->getService("database")->onQuery[] = callback($ConnectionPanel, 'logQuery');
 
 
-
+$application = $container -> application;
 
 $router = $application->getRouter();
 
@@ -41,7 +41,7 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 	'id' => NULL,
 ));
 
-$application = $container -> application;
+
 
 //$application->errorPresenter = 'Error';
 $application->catchExceptions = FALSE;

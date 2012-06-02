@@ -17,7 +17,7 @@ use Nette;
 
 /**
  * Representation of filtered table grouped by some column.
- * Selector is based on the great library NotORM http://www.notorm.com written by Jakub Vrana.
+ * GroupedSelection is based on the great library NotORM http://www.notorm.com written by Jakub Vrana.
  *
  * @author     Jakub Vrana
  */
@@ -170,7 +170,8 @@ class GroupedSelection extends Selection
 			return;
 		}
 
-		$referencing = & $this->refTable->referencing[$this->getSql()];
+		$hash = md5($this->getSql() . json_encode($this->parameters));
+		$referencing = & $this->refTable->referencing[$hash];
 		if ($referencing === NULL) {
 			$limit = $this->limit;
 			$rows = count($this->refTable->rows);
@@ -197,6 +198,13 @@ class GroupedSelection extends Selection
 		$this->data = & $referencing[$this->active];
 		if ($this->data === NULL) {
 			$this->data = array();
+		} else {
+			foreach ($this->data as $row) {
+				// update active id in the selection reference in case of requerying for another column
+				// must be updated only the active key, not the Selection reference, because of caching accessed columns
+				$row->getTable()->active = $this->active;
+			}
+			reset($this->data);
 		}
 	}
 

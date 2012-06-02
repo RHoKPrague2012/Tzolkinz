@@ -101,17 +101,18 @@ class Container extends Nette\ComponentModel\Container implements \ArrayAccess
 
 	/**
 	 * Returns the values submitted by the form.
-	 * @return Nette\ArrayHash
+	 * @param  bool  return values as an array?
+	 * @return Nette\ArrayHash|array
 	 */
-	public function getValues()
+	public function getValues($asArray = FALSE)
 	{
-		$values = new Nette\ArrayHash;
+		$values = $asArray ? array() : new Nette\ArrayHash;
 		foreach ($this->getComponents() as $name => $control) {
 			if ($control instanceof IControl && !$control->isDisabled() && !$control instanceof ISubmitterControl) {
-				$values->$name = $control->getValue();
+				$values[$name] = $control->getValue();
 
 			} elseif ($control instanceof Container) {
-				$values->$name = $control->getValues();
+				$values[$name] = $control->getValues($asArray);
 			}
 		}
 		return $values;
