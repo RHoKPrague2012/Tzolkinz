@@ -106,6 +106,8 @@ body {
 	width:260px;
 	height:40px;
 	}
+	
+.ui-menu-item {	width:320px;}
 
 #diet_type_desc {display:inline;}
 
@@ -139,6 +141,8 @@ px      68    160    252    344    436    528    620    712    */
 	width:200px;
 	height:40px;}
 
+	.ui-menu-item {	width:280px;}
+
 }
 
 
@@ -165,7 +169,11 @@ px      68    160    252    */
 
 	.searchbox {
 	width:220px;
-	height:30px;}
+	height:30px;
+	}
+	
+	.ui-menu-item {	width:220px;}
+	
 
 	.select_diet {
 	width:220px;
@@ -207,6 +215,8 @@ px      68    160    252    344    436    */
 	width:200px;
 	height:40px;
 	}
+	
+.ui-menu-item {	width:280px;}
 
 #diet_type {margin-top:25px;}
 	
@@ -243,13 +253,10 @@ P {padding-bottom:20px;}
 	padding:3px;
 	margin-top:25px;
 	color:#777;}
-	
-
-
 
 
 .searchbutton  {
-margin-top:25px;
+	margin-top:25px;
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -345,6 +352,11 @@ margin-top:25px;
 
 /* discussion */
 
+#discussion UL {list-style-type:disc;
+margin-left:35px;
+margin-bottom:25px;}
+
+
 #discussion {margin-top:15px;
 text-align:left;
 background: #fff;padding:8px 10px 3px 10px;
@@ -361,3 +373,138 @@ background: #fff;padding:8px 10px 3px 10px;
 
 .comment_text {display:block;}
 
+#pagination {margin-top:25px;
+	margin-left:auto;
+	margin-right:auto;
+	position:relative;
+	width:95%;
+	padding-top:10px;
+	border-top:1px solid #ededed;}
+
+#pagination_text {float:left;
+	padding-right:20px;
+	padding-top:10px}
+
+.page {display:block;
+	width:65px;
+	border:1px solid #ededed;	
+	padding:6px 2px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	font-size:18px;
+	text-align:center;
+	float:left;
+	margin-bottom:10px;
+}
+
+.page_selected {background:#ededed;
+			font-weight:bold;}
+
+.page A {display:block;}
+
+.clear {clear:both;
+		padding-bottom:20px}
+		
+/* product list */		
+
+#product_list {background: #fff;
+	padding:8px 10px 3px 10px;
+	-moz-border-radius:15px;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+	margin-bottom:5px;
+	margin-top:25px;
+column-width: 12em;
+column-gap: 1em;
+-moz-column-width: 12em;
+-webkit-column-width: 12em;
+-moz-column-gap: 1em;
+-webkit-column-gap: 1em;
+}
+
+#product_list UL {list-style-type:none;
+margin-left:35px;
+margin-bottom:25px;
+text-align:left;
+width:230px;
+}
+
+#product_list UL LI.category {
+			font-weight: bold;
+			margin-top:25px;}
+
+#product_list UL LI.category_first {margin-top:0px;}
+
+
+#product_list UL LI DIV {width:10em;}
+
+.product_rating {width:30px;
+text-align:right;
+display:block;
+float:right;
+}
+
+
+/* autocomplete */
+
+.ui-autocomplete {list-style-type:none;
+margin-left:15px;}
+
+.ui-menu-item {padding:4px;font-size:20px;background:#fff;
+width:320px;border:1px solid #dcdcdc;}
+
+
+/* add forum */
+
+
+#frm-commentNew {
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;}
+
+label {clear:both;}
+
+#frm-commentNew input {
+	font: 18px Georgia, serif;
+	padding:3px;
+	color:#777;
+	}
+
+#frm-commentNew textarea {
+	width: 90%;
+	font: 18px Georgia, serif;
+	padding:10px;
+	color:#777;
+	}
+
+input#frmcommentNew-submit {
+margin-top:25px;
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background-color:#ededed;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border:2px solid #dcdcdc;
+	display:inline-block;
+	color:#000;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #ffffff;
+}.classname:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+	background-color:#dfdfdf;
+}.classname:active {
+	position:relative;
+	top:1px;
+}
