@@ -1,16 +1,16 @@
-<?php //netteCache[01]000369a:2:{s:4:"time";s:21:"0.37942300 1338657688";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:47:"/home/vava/rhok/app/templates/Food/detail.latte";i:2;i:1338657031;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
+<?php //netteCache[01]000369a:2:{s:4:"time";s:21:"0.64568300 1338712353";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:47:"/home/vava/rhok/app/templates/Food/detail.latte";i:2;i:1338712351;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
 
 // source file: /home/vava/rhok/app/templates/Food/detail.latte
 
 ?><?php
 // prolog Nette\Latte\Macros\CoreMacros
-list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '842h1r5btq')
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'uym453byft')
 ;
 // prolog Nette\Latte\Macros\UIMacros
 //
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lbee68f19a0f_content')) { function _lbee68f19a0f_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lbe5b5fac69e_content')) { function _lbe5b5fac69e_content($_l, $_args) { extract($_args)
 ?><h3><?php echo Nette\Templating\Helpers::escapeHtml($food->name, ENT_NOQUOTES) ?>
  a <?php echo Nette\Templating\Helpers::escapeHtml($diet->name, ENT_NOQUOTES) ?></h3>
 
@@ -39,7 +39,9 @@ if (!function_exists($_l->blocks['content'][] = '_lbee68f19a0f_content')) { func
 
 <a href="<?php echo htmlSpecialChars($_presenter->link("Homepage:default")) ?>">Zpět na hledání</a>
 <?php $_ctrl = $_control->getComponent("commentsContainer"); if ($_ctrl instanceof Nette\Application\UI\IRenderable) $_ctrl->validateControl(); $_ctrl->render() ?>
-<a href="<?php echo htmlSpecialChars($_presenter->link("Homepage:default")) ?>">Zpět na hledání</a><?php
+<a href="<?php echo htmlSpecialChars($_presenter->link("Homepage:default")) ?>">Zpět na hledání</a>
+<a href="<?php echo htmlSpecialChars($_presenter->link("Administration:commentNew", array($food->id, $diet->id))) ?>
+">Přidat příspěvek</a><?php
 }}
 
 //

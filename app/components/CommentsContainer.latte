@@ -17,4 +17,11 @@
         </div>
     {/foreach}
     
+    <pagator>
+        stránky:
+        {for $i = 1; $i*$COMMENTS_ON_SITE < $commentCount; $i++}
+            <span class="page"><a href="/rhok/food/detail/{$dietId}/{$foodId}/{$i}">{$i}</a></span>
+        {/for}
+    </pagator>
+    
 </div>

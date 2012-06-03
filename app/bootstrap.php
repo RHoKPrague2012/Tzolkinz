@@ -35,11 +35,19 @@ $router[] = new Route('index.php', array(
 	'action' => 'default',
 ), Route::ONE_WAY);
 
-$router[] = new Route('food/detail/<dietId>/<foodId>', array(
+$router[] = new Route('food/detail/<dietId>/<foodId>[/<commentSite>]', array(
 	'presenter' => 'Food',
 	'action' => 'detail',
 	'dietId' => NULL,
     'foodId' => NULL,
+    'commentSite' => 1,
+));
+
+$router[] = new Route('administration/commentNew/<foodId>/<dietId>', array(
+	'presenter' => 'Administration',
+	'action' => 'commentNew',
+    'foodId' => NULL,
+	'dietId' => NULL,
 ));
 
 $router[] = new Route('<presenter>/<action>/<id>', array(
