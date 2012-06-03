@@ -15,7 +15,7 @@ class FoodPresenter extends BasePresenter {
         parent::startup();
     }
 
-    public function renderDetail($dietId, $foodId, $commentSite = 1) {
+    public function actionDetail($dietId, $foodId, $commentSite) {
         $this->dietId = $dietId;
         $this->foodId = $foodId;
         $this->commentSite = $commentSite;
@@ -26,6 +26,12 @@ class FoodPresenter extends BasePresenter {
                 ->where('food_id', $foodId)
                 ->where('diet_id', $dietId)
                 ->fetch();
+        
+        if ($foodDietRanks === FALSE) {
+            $this->flashMessage('Kombinaci toho jídla a této diety nemáme v DB');
+            $this->redirect("Homepage:default");
+        }
+        
         $food = $this->model->getFood()
                 ->where('id', $foodId)
                 ->fetch();

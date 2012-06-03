@@ -10,10 +10,11 @@ class CommentsContainer extends UI\Control {
 
     private $model;
 
-    const COMMENTS_ON_SITE = 5;
+    const COMMENTS_ON_SITE = 1;
 
     public function __construct($presenter, $foodId, $dietId, $siteId) {
         parent::__construct();
+        
         $this->model = $presenter->model;
 
 
@@ -28,8 +29,11 @@ class CommentsContainer extends UI\Control {
                 ->order('insert_date')
                 ->limit($siteId * self::COMMENTS_ON_SITE, ($siteId - 1) * self::COMMENTS_ON_SITE);
         
+        $this->template->foodId = $foodId;
+        $this->template->dietId = $dietId;
         $this->template->commentCount = $commentCount;
         $this->template->comments = $comments;
+        $this->template->COMMENTS_ON_SITE = self::COMMENTS_ON_SITE;
     }
 
     public function render() {
@@ -37,6 +41,10 @@ class CommentsContainer extends UI\Control {
         $this->template->setFile(__DIR__ . '/CommentsContainer.latte');
         $this->template->render();
     }
+    
+    public function link($target, $args = array()){
+     return $this->getPresenter()->link($target, $args);
+}
 
 }
 

@@ -18,6 +18,9 @@
 
     <body lang="cs">
         <div id="cont">
+            {foreach $flashes as $flash}
+                <div class="flash {$flash->type}">{$flash->message}</div>
+            {/foreach}
 
             {block content}
 

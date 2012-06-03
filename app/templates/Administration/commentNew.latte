@@ -1,0 +1,13 @@
+{block content}
+{form commentNew}
+    
+    {if $form->getErrors()}
+        <div class="error">
+            {$form->render('errors')}
+        </div>
+    {/if}
+    {label nick /} {input nick}
+    {label message /} {input message}
+    {input renderTime}
+    {input submit}
+{/form}

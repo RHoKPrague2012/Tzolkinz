@@ -24,15 +24,15 @@ class SearchForm extends UI\Form {
                 ->order('display_order');
 
 
-        $this->addText('search', 'insert food:')
+        $this->addText('search', 'název jídla')
                 ->setAttribute('value', 'food name')
                 ->setAttribute('onclick', 'this.value=\'\';')
                 ->setAttribute('class', 'searchbox');
 
-        $this->addSelect('dietType', 'diet type', $dietTypes->fetchPairs('id', 'name'))
+        $this->addSelect('dietType', 'typ diety', $dietTypes->fetchPairs('id', 'name'))
                 ->setAttribute('class', 'searchbutton');
 
-        $this->addSubmit('submit', 'Find IT!')
+        $this->addSubmit('submit', 'Vyhledat')
                 ->setAttribute('class', 'searchbutton');
 
         $this->onSuccess[] = callback($this, 'seachFormSubmitted');
@@ -45,13 +45,14 @@ class SearchForm extends UI\Form {
                 ->where('name LIKE ?', '%' . $values->search . '%')
                 ->fetch();
 
-        
-        
+        if ($food === FALSE) {
+            $this->addError("Jídlo ".$values->search." nenalezeno");
+            return;
+        }
+
         $this->parent->parent->redirect('Food:detail', array(
-            "diet" => $values->dietType,
-            "id" => $food->id));
-        //dump($food);
-        //dump($values);
+            "dietId" => $values->dietType,
+            "foodId" => $food->id));
     }
 
 }
