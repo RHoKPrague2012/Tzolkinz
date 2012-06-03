@@ -361,3 +361,35 @@ background: #fff;padding:8px 10px 3px 10px;
 
 .comment_text {display:block;}
 
+#pagination {margin-top:25px;
+	margin-left:auto;
+	margin-right:auto;
+	position:relative;
+	width:95%;
+	padding-top:10px;
+	border-top:1px solid #ededed;}
+
+#pagination_text {float:left;
+	padding-right:20px;
+	padding-top:10px}
+
+.page {display:block;
+	width:65px;
+	border:1px solid #ededed;	
+	padding:6px 2px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	font-size:18px;
+	text-align:center;
+	float:left;
+	margin-bottom:10px;
+}
+
+.page_selected {background:#ededed;
+			font-weight:bold;}
+
+.page A {display:block;}
+
+.clear {clear:both;
+		padding-bottom:20px}
