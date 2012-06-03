@@ -1,0 +1,35 @@
+{block content}
+{form foodNewForm}
+    
+    <h3>přidání potraviny</h3>
+    {if $form->getErrors()}
+        <div class="error">
+            {$form->render('errors')}
+        </div>
+    {/if}
+
+    {label name /}{input name}
+    {label desc /}{input desc}
+
+<div> zdroje/odkazy
+    {label sourceTitle1 /}{input sourceTitle1}
+    {label sourceUrl1 /}{input sourceUrl1}
+
+    {label sourceTitle2 /}{input sourceTitle2}
+    {label sourceUrl2 /}{input sourceUrl2}
+
+    {label sourceTitle3 /}{input sourceTitle3}
+    {label sourceUrl3 /}{input sourceUrl3}
+
+    {label sourceTitle4 /}{input sourceTitle4}
+    {label sourceUrl4 /}{input sourceUrl4}
+
+    {label sourceTitle5 /}{input sourceTitle5}
+    {label sourceUrl5 /}{input sourceUrl5}
+</div>
+    {label dietType /}{input dietType}
+    {label danger /}{input danger}
+    
+    
+    {input submit}
+{/form}

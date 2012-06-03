@@ -18,10 +18,17 @@ class AdministrationPresenter extends BasePresenter {
         $this->foodId = $foodId;
         $this->dietId = $dietId;
     }
+    
+    public function renderFoodNew() {
+        
+    }
 
     public function createComponentCommentNew() {
         return new CommentNewForm($this, $this->foodId, $this->dietId);
     }
 
+    public function createComponentFoodNewForm() {
+        return new FoodNewForm($this);
+    }
 }
 

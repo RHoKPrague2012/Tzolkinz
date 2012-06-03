@@ -29,6 +29,8 @@ class CommentNewForm extends UI\Form {
                 ->setRequired('text je povinný');
 
         $this->addHidden('renderTime', time());
+        $this->addHidden('foodId', $foodId);
+        $this->addHidden('dietId', $dietId);
 
         $this->addSubmit('submit', 'Vložit');
 
@@ -38,23 +40,24 @@ class CommentNewForm extends UI\Form {
     public function commentNewFormSubmitted($form) {
         $values = $form->values;
 
-        if ($values->renderTime + 8 < time()) {
+        if ($values->renderTime + 4 > time()) {
             $this->addError('You are Robot!');
             return;
         }
 
         $this->model->getDebates()
                 ->insert(array(
-                    'food_id' => $this->foodId,
-                    'diet_id' => $this->dietId,
+                    'food_id' => $values->foodId,
+                    'diet_id' => $values->dietId,
                     'nick' => $values->nick,
                     'message' => $values->message,
                     'insert_date' => new DateTime,
                 ));
 
-        $this->parent->parent->redirect('Food:detail', array(
-            "dietId" => $this->foodId,
-            "foodId" => $this->dietId
+
+        $this->parent->redirect('Food:detail', array(
+            "dietId" => $values->foodId,
+            "foodId" => $values->dietId
         ));
     }
 
