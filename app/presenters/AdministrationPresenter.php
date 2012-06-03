@@ -19,6 +19,13 @@ class AdministrationPresenter extends BasePresenter {
         $this->dietId = $dietId;
     }
     
+    public function renderFoodList() {
+        $this->template->list = $this->model->getFoodDietRanks()
+                ->select('food.name AS fname')
+                ->select('diet.name AS dname')
+                ->order('food.name');
+    }
+    
     public function renderFoodNew() {
         
     }

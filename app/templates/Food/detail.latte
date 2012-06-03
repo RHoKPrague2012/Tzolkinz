@@ -14,6 +14,10 @@
         {$rankDef->desc}
     </div>
 
+    {foreach $profileHrefs as $h}
+        {$h->title}
+        {$h->url}
+    {/foreach}
 
 
     <div id="product_desc">
@@ -24,5 +28,4 @@
 
 <a href="{plink Homepage:default}">Zpět na hledání</a>
 {control commentsContainer}
-<a href="{plink Homepage:default}">Zpět na hledání</a>
 <a href="{plink Administration:commentNew $food->id, $diet->id}">Přidat příspěvek</a>

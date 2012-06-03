@@ -1,16 +1,16 @@
-<?php //netteCache[01]000365a:2:{s:4:"time";s:21:"0.78040600 1338717247";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:43:"/home/vava/rhok/app/templates/@layout.latte";i:2;i:1338717246;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
+<?php //netteCache[01]000365a:2:{s:4:"time";s:21:"0.96651600 1338736847";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:43:"/home/vava/rhok/app/templates/@layout.latte";i:2;i:1338736828;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
 
 // source file: /home/vava/rhok/app/templates/@layout.latte
 
 ?><?php
 // prolog Nette\Latte\Macros\CoreMacros
-list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'rn91p2801l')
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '2m3galfev7')
 ;
 // prolog Nette\Latte\Macros\UIMacros
 //
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lbdee2d756c7_content')) { function _lbdee2d756c7_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lb1e19660907_content')) { function _lb1e19660907_content($_l, $_args) { extract($_args)
 ;
 }}
 
@@ -63,9 +63,9 @@ if ($_l->extends) {
 call_user_func(reset($_l->blocks['content']), $_l, get_defined_vars())  ?>
 
             <div id="navig">
-                <a href="/seznam">Seznam potravin</a> |
-                <a href="<?php echo htmlSpecialChars($_control->link("Administration:foodNew")) ?>">Přidej potravinu</a> |
-                <a href="/diskuse">Poslední diskuse</a>
+                <a href="<?php echo htmlSpecialChars($_control->link("Homepage:default")) ?>">Vyhledávání</a> |
+                <a href="<?php echo htmlSpecialChars($_control->link("Food:list")) ?>">Seznam potravin</a> |
+                <a href="<?php echo htmlSpecialChars($_control->link("Administration:foodNew")) ?>">Přidej potravinu</a>
             </div>
         </div>
     </body>

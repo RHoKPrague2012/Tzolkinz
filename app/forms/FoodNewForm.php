@@ -43,9 +43,10 @@ class FoodNewForm extends UI\Form {
         $dietTypes = $this->model->getDiet()
                 ->order('display_order');
 
-        $this->addText('danger', 'nebezpečnost')
-                ->setRequired('nebezpečnost je povinná')
-                ->addRule(Form::INTEGER, 'nebezpečnost musí být číslo');
+        $ranksDef = $this->model->getRanksDef()
+                ->order('id');
+
+        $this->addSelect('danger', 'nebezpečnost', $ranksDef->fetchPairs('id', 'desc'));
 
         $this->addSelect('dietType', 'typ diety', $dietTypes->fetchPairs('id', 'name'))
                 ->setAttribute('class', 'searchbutton');
@@ -82,21 +83,21 @@ class FoodNewForm extends UI\Form {
                         'rank' => $values->danger,
                         'desc' => $values->desc,
                     ));
-            
+
             $this->model->getFoodHrefs()
-                    ->insert($this->fuckWithHrefs($food->id, $values));
-            
+                    ->insert($this->fuckWithHrefs($food->id, $values->dietType, $values));
         } else {
             $this->addError("vazba jídlo - dieta již existuje");
         }
     }
 
-    private function fuckWithHrefs($foodId, $values) {
+    private function fuckWithHrefs($foodId, $dietId, $values) {
 
         $hrefs = array();
         if ($values->sourceUrl1) {
             $hrefs[] = array(
                 'food_id' => $foodId,
+                'diet_id' => $dietId,
                 'title' => $values->sourceTitle1,
                 'url' => $values->sourceUrl1,
             );
@@ -104,6 +105,7 @@ class FoodNewForm extends UI\Form {
         if ($values->sourceUrl2) {
             $hrefs[] = array(
                 'food_id' => $foodId,
+                'diet_id' => $dietId,
                 'title' => $values->sourceTitle2,
                 'url' => $values->sourceUrl2,
             );
@@ -111,6 +113,7 @@ class FoodNewForm extends UI\Form {
         if ($values->sourceUrl3) {
             $hrefs[] = array(
                 'food_id' => $foodId,
+                'diet_id' => $dietId,
                 'title' => $values->sourceTitle3,
                 'url' => $values->sourceUrl3,
             );
@@ -118,6 +121,7 @@ class FoodNewForm extends UI\Form {
         if ($values->sourceUrl4) {
             $hrefs[] = array(
                 'food_id' => $foodId,
+                'diet_id' => $dietId,
                 'title' => $values->sourceTitle4,
                 'url' => $values->sourceUrl4,
             );
@@ -125,6 +129,7 @@ class FoodNewForm extends UI\Form {
         if ($values->sourceUrl5) {
             $hrefs[] = array(
                 'food_id' => $foodId,
+                'diet_id' => $dietId,
                 'title' => $values->sourceTitle5,
                 'url' => $values->sourceUrl5,
             );

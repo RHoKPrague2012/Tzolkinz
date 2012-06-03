@@ -1,3 +1,4 @@
+{if $commentCount != 0}
 <div id="discussion">
 
     <h4>Diskuse</h4>
@@ -8,7 +9,7 @@
                 {$c->nick}
             </span>
             <span class="discussion_date">
-                {$c->insert_date}
+                {$c->insert_date|date:'%d.%m.%Y'}
             </span>
 
             <span class="comment_text">
@@ -25,3 +26,7 @@
     </pagator>
     
 </div>
+
+    <a href="/rhok/">Zpět na hledání</a>
+
+{/if}

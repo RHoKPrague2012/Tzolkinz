@@ -4,7 +4,7 @@ use Nette\Diagnostics\Debugger, Nette\Application\Routers\Route;
 
 require_once LIBS_DIR . '/Nette/loader.php';
 
-Debugger::enable(Debugger::DEVELOPMENT);
+Debugger::enable(Debugger::PRODUCTION);
 
 Debugger::$logDirectory = __DIR__ . '/../log';
 Debugger::$strictMode = TRUE;
@@ -48,6 +48,12 @@ $router[] = new Route('administration/commentNew/<foodId>/<dietId>', array(
 	'action' => 'commentNew',
     'foodId' => NULL,
 	'dietId' => NULL,
+));
+
+$router[] = new Route('Food/list/<dietId>', array(
+	'presenter' => 'Food',
+	'action' => 'list',
+	'id' => 1,
 ));
 
 $router[] = new Route('<presenter>/<action>/<id>', array(

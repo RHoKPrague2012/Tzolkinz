@@ -1,0 +1,37 @@
+
+{block content}
+
+
+<h3>Vhodnost potravin - seznam</h3>
+
+<div id="diet_type">
+
+    <div id="diet_type_desc">typ diety:</div>
+    <select class="select_diet">
+        <option value="1">nízkosacharidová</option>
+        <option selected value="1">bezlepková</option>
+    </select>
+    <br>
+    <br>Seznam ukazuje vhodnost potravin pro vybranou dietu od 1 (vhodné) až po 5 (nebezpečné).
+</div>
+
+pro: {$diet->name}
+<div id="product_list">
+
+<ul>
+{foreach $categories as $c}
+    <li class="category{if $iterator->first} category_first{/if}">
+        {$c->name}
+    </li>
+    {foreach $list as $l}
+        {if $l->category_id == $c->id}
+            <li>
+                <div><a href="{link Food:detail, dietId => 1, foodId => $l->id}">{$l->fname}</a><span class="vhodnost{$l->rank} product_rating"> {$l->rank}</span></div>
+            </li>
+        {/if}
+    {/foreach}
+{/foreach}
+</ul>
+
+    <div class="clear"></div>
+</div>
