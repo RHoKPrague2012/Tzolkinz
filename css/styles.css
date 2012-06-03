@@ -345,6 +345,11 @@ margin-top:25px;
 
 /* discussion */
 
+#discussion UL {list-style-type:disc;
+margin-left:35px;
+margin-bottom:25px;}
+
+
 #discussion {margin-top:15px;
 text-align:left;
 background: #fff;padding:8px 10px 3px 10px;
